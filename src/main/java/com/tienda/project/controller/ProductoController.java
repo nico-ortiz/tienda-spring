@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +39,11 @@ public class ProductoController {
     @DeleteMapping("/productos/eliminar/{codigoProducto}")
     public ResponseEntity<Producto> deleteProduct(@PathVariable Long codigoProducto) {
         return ResponseEntity.ok(productoService.deleteProducto(codigoProducto));
+    }
+
+    @PutMapping("/productos/editar/{codigoProducto}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Long codigoProducto, @RequestBody Producto producto) {        
+        productoService.updateProducto(codigoProducto, producto);
+        return ResponseEntity.ok(productoService.getProducto(producto.getCodigoProducto()));
     }
 }

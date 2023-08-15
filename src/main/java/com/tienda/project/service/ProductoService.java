@@ -35,5 +35,10 @@ public class ProductoService implements IProductoService{
 		productoRepository.deleteById(codigoProducto);
 		return productoD;
 	}
+
+	@Override
+	public Producto updateProducto(Long codigoProducto, Producto producto) {
+		return this.createProducto(producto);
+	}
     
 }

@@ -13,4 +13,6 @@ public interface IProductoService {
     public Producto getProducto(Long codigoProducto);
 
     public Producto deleteProducto(Long codigoProducto);
+
+    public Producto updateProducto(Long codigoProducto, Producto producto);
 }
