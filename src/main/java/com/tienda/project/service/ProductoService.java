@@ -1,5 +1,7 @@
 package com.tienda.project.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,11 @@ public class ProductoService implements IProductoService{
 	@Override
 	public Producto createProducto(Producto producto) {
 		return productoRepository.save(producto);
+	}
+
+	@Override
+	public List<Producto> getProductos() {
+		return productoRepository.findAll();
 	}
     
 }
