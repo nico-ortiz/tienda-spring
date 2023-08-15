@@ -28,5 +28,12 @@ public class ProductoService implements IProductoService{
 	public Producto getProducto(Long codigoProducto) {
 		return productoRepository.findById(codigoProducto).orElse(null);
 	}
+
+	@Override
+	public Producto deleteProducto(Long codigoProducto) {
+		Producto productoD = this.getProducto(codigoProducto);
+		productoRepository.deleteById(codigoProducto);
+		return productoD;
+	}
     
 }
