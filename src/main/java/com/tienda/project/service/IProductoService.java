@@ -9,4 +9,6 @@ public interface IProductoService {
     public Producto createProducto(Producto producto);
 
     public List<Producto> getProductos();
+
+    public Producto getProducto(Long codigoProducto);
 }

@@ -23,5 +23,10 @@ public class ProductoService implements IProductoService{
 	public List<Producto> getProductos() {
 		return productoRepository.findAll();
 	}
+
+	@Override
+	public Producto getProducto(Long codigoProducto) {
+		return productoRepository.findById(codigoProducto).orElse(null);
+	}
     
 }
