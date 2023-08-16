@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,9 +25,12 @@ public class ClienteController {
     }
 
     @GetMapping("/clientes")
-    public ResponseEntity<List<Cliente>> getCliente() {
+    public ResponseEntity<List<Cliente>> getClientes() {
         return ResponseEntity.ok(clienteService.getClientes());
     }
 
-    
+    @GetMapping("/clientes/{idCliente}")
+    public ResponseEntity<Cliente> getCliente(@PathVariable Long idCliente) {
+        return  ResponseEntity.ok(clienteService.getCliente(idCliente));
+    }
 }
