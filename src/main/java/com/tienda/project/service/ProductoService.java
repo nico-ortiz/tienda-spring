@@ -37,7 +37,7 @@ public class ProductoService implements IProductoService{
 	}
 
 	@Override
-	public Producto updateProducto(Long codigoProducto, Producto producto) {
+	public Producto updateProducto(Producto producto) {
 		return this.createProducto(producto);
 	}
     
