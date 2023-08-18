@@ -40,4 +40,8 @@ public class VentaController {
         return ResponseEntity.ok(ventaService.addProductoToVenta(codigoVenta, codigoProducto));
     }
     
+    @GetMapping("{codigoVenta}")
+    public ResponseEntity<Venta> getVenta(@PathVariable Long codigoVenta) {
+        return ResponseEntity.ok(ventaService.getVenta(codigoVenta));
+    }
 }
