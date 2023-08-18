@@ -41,7 +41,7 @@ public class Venta {
 	)
     private List<Producto> listaProductos = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
     private Cliente cliente;
 
