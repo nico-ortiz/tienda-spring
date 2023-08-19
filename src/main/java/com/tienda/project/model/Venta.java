@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +35,7 @@ public class Venta {
     private Double total;
 
     @ManyToMany
+	@JsonIgnore
 	@JoinTable(
 		name = "ventas_productos",
 		joinColumns = @JoinColumn(name = "venta_id", referencedColumnName = "codigoVenta" ),
@@ -40,7 +43,7 @@ public class Venta {
 	)
     private List<Producto> listaProductos = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
     private Cliente cliente;
 

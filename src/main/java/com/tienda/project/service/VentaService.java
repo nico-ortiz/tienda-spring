@@ -45,7 +45,7 @@ public class VentaService implements IVentaService{
     @Override
     public Venta deleteVenta(Long idVenta) {
         Venta venta = this.getVenta(idVenta);
-        ventaRepository.delete(venta);
+        ventaRepository.deleteById(idVenta);
         return venta;
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class VentaController {
     public ResponseEntity<List<Venta>> getVentas() {
         return ResponseEntity.ok(ventaService.getVentas());
     }
-
+    
     @PutMapping("/{codigoVenta}/listaProductos/{codigoProducto}")
     public ResponseEntity<Venta> addProductoToVenta(
         @PathVariable Long codigoVenta,
@@ -44,4 +45,11 @@ public class VentaController {
     public ResponseEntity<Venta> getVenta(@PathVariable Long codigoVenta) {
         return ResponseEntity.ok(ventaService.getVenta(codigoVenta));
     }
+
+    @DeleteMapping("/eliminar/{codigoVenta}")
+    public ResponseEntity<Venta> deleteVenta(@PathVariable Long codigoVenta) {
+        return ResponseEntity.ok(ventaService.deleteVenta(codigoVenta));
+    }
+
+    
 }
