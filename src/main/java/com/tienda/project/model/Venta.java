@@ -74,4 +74,12 @@ public class Venta {
 			producto.getVentas().add(this);
 		}
 	}
+
+	public void remove(Producto producto) {
+		this.listaProductos.remove(producto);
+		if (producto.getVentas().contains(this)) {
+			producto.getVentas().remove(this);
+		}
+
+	}
 }

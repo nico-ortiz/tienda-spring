@@ -66,7 +66,7 @@ public class VentaService implements IVentaService{
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
-        venta.getListaProductos().remove(producto);
+        venta.remove(producto);
         return this.updateVenta(venta);
     }
 }
