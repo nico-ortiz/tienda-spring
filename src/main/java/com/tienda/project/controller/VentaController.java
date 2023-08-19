@@ -51,5 +51,9 @@ public class VentaController {
         return ResponseEntity.ok(ventaService.deleteVenta(codigoVenta));
     }
 
-    
+    @PutMapping("/editar/{codigoVenta}")
+    public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
+        ventaService.updateVenta(venta);
+        return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
+    }
 }
