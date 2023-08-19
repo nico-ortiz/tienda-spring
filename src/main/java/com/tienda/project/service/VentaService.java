@@ -58,7 +58,15 @@ public class VentaService implements IVentaService{
     public Venta addProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
-        venta.getListaProductos().add(producto);
+        venta.addProducto(producto);
+        return this.updateVenta(venta);
+    }
+
+    @Override
+    public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto) {
+        Venta venta = ventaRepository.findById(codigoVenta).get();
+        Producto producto = productoRepository.findById(codigoProducto).get();
+        venta.getListaProductos().remove(producto);
         return this.updateVenta(venta);
     }
 }

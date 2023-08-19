@@ -70,5 +70,8 @@ public class Venta {
 
 	public void addProducto(Producto producto) {
 		this.listaProductos.add(producto);
+		if (!producto.getVentas().contains(this)) {
+			producto.getVentas().add(this);
+		}
 	}
 }
