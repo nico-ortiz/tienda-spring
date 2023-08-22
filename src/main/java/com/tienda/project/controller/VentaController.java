@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tienda.project.additionalFunctions.Pair;
+import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 import com.tienda.project.service.IVentaService;
@@ -90,5 +88,10 @@ public class VentaController {
         json.put("totalCount", totalCount);
 
         return ResponseEntity.ok(json);
+    }
+
+    @GetMapping("/mayorVenta")
+    public ResponseEntity<VentaDTO> getMoreExpensiveVenta() {
+        return ResponseEntity.ok(ventaService.getMoreExpensiveVenta());
     }
 }
