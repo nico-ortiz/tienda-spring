@@ -1,5 +1,6 @@
 package com.tienda.project.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,19 @@ public class ProductoService implements IProductoService{
 	@Override
 	public Producto updateProducto(Producto producto) {
 		return this.createProducto(producto);
+	}
+
+	@Override
+	public List<Producto> getProductosWhoseStockLessThanFive() {
+		List<Producto> products = this.getProductos();		
+		List<Producto> list = new ArrayList<>();
+
+		for (Producto product: products) {
+			if (product.getCantidadDisponible() < 5) {
+				list.add(product);
+			}
+		}
+		return list;
 	}
     
 }
