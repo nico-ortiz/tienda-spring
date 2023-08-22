@@ -1,8 +1,12 @@
 package com.tienda.project.controller;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,8 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 import com.tienda.project.service.IVentaService;
@@ -68,5 +76,19 @@ public class VentaController {
     @GetMapping("/productos/{codigoVenta}")
     public ResponseEntity<List<Producto>> getProductosByAVenta(@PathVariable Long codigoVenta) {
         return ResponseEntity.ok(ventaService.getProductosByAVenta(codigoVenta));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Map<String, Double>> getTotalVentasByADay(
+        @RequestParam(name = "fechaVenta") LocalDate fechaVenta) {
+        Pair<Double> pair = ventaService.getTotalPriceAndTotalCountsOfVentasByADay(fechaVenta);
+        Double totalPrice = pair.getFst();
+        Double totalCount = pair.getSnd();
+        Map<String, Double> json = new HashMap<>();
+        
+        json.put("totalPrice", totalPrice);
+        json.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(json);
     }
 }
