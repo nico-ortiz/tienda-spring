@@ -10,6 +10,7 @@ import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dao.IClienteRepository;
 import com.tienda.project.dao.IProductoRepository;
 import com.tienda.project.dao.IVentaRepository;
+import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Cliente;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
@@ -99,5 +100,21 @@ public class VentaService implements IVentaService{
             }
         }
         return new Pair<Double>(totalPrice, totalCount);
+    }
+
+    @Override
+    public VentaDTO getMoreExpensiveVenta() {
+        List<Venta> ventas = this.getVentas();
+        Double maxPriceTotal = Double.MIN_VALUE;
+        Venta maxVenta = new Venta();
+
+        for (Venta venta: ventas) {
+            if (venta.getTotal() > maxPriceTotal) {
+                maxPriceTotal = venta.getTotal();
+                maxVenta = venta;
+            }
+        }
+
+        return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getCliente().getNombre(), maxVenta.getCliente().getApellido());
     }
 }
