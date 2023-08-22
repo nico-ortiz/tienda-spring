@@ -48,4 +48,9 @@ public class ProductoController {
         productoService.updateProducto(producto);
         return ResponseEntity.ok(productoService.getProducto(producto.getCodigoProducto()));
     }
+
+    @GetMapping("/falta_stock")
+    public ResponseEntity<List<Producto>> getProductosStock() {
+        return ResponseEntity.ok(productoService.getProductosWhoseStockLessThanFive());
+    }
 }
