@@ -15,6 +15,4 @@ public interface IProductoService {
     public Producto deleteProducto(Long codigoProducto);
 
     public Producto updateProducto(Producto producto);
-
-    public List<Producto> getProductosWhoseStockLessThanFive();
 }
