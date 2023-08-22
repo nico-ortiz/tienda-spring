@@ -1,7 +1,9 @@
 package com.tienda.project.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 
@@ -22,4 +24,6 @@ public interface IVentaService {
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto);
 
     public List<Producto> getProductosByAVenta(Long codigoVenta);
+
+    public Pair<Double> getTotalPriceAndTotalCountsOfVentasByADay(LocalDate fechaVenta);
 }

@@ -1,10 +1,12 @@
 package com.tienda.project.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dao.IClienteRepository;
 import com.tienda.project.dao.IProductoRepository;
 import com.tienda.project.dao.IVentaRepository;
@@ -83,5 +85,19 @@ public class VentaService implements IVentaService{
     public List<Producto> getProductosByAVenta(Long codigoVenta) {
         Venta venta = this.getVenta(codigoVenta);
         return venta.getListaProductos();
+    }
+
+    @Override
+    public Pair<Double> getTotalPriceAndTotalCountsOfVentasByADay(LocalDate fechaVenta) {
+        List<Venta> ventas = this.getVentas();
+        Double totalPrice = 0.0, totalCount = 0.0;
+
+        for (Venta venta: ventas) {
+            if (venta.getFechaVenta().compareTo(fechaVenta) == 0) {
+                totalPrice += venta.getTotal();
+                totalCount++;
+            }
+        }
+        return new Pair<Double>(totalPrice, totalCount);
     }
 }
