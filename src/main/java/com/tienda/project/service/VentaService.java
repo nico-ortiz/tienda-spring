@@ -59,6 +59,7 @@ public class VentaService implements IVentaService{
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
         
+        //Control stock
         if (producto.getCantidadDisponible() > 0) {
             producto.setCantidadDisponible(producto.getCantidadDisponible() - 1);
             venta.addProducto(producto);

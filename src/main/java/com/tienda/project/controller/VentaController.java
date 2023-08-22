@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 import com.tienda.project.service.IVentaService;
 
-import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/ventas")
@@ -64,5 +63,10 @@ public class VentaController {
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
         ventaService.updateVenta(venta);
         return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
+    }
+
+    @GetMapping("/productos/{codigoVenta}")
+    public ResponseEntity<List<Producto>> getProductosByAVenta(@PathVariable Long codigoVenta) {
+        return ResponseEntity.ok(ventaService.getProductosByAVenta(codigoVenta));
     }
 }
