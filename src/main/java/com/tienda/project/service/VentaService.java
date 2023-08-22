@@ -63,6 +63,7 @@ public class VentaService implements IVentaService{
         if (producto.getCantidadDisponible() > 0) {
             producto.setCantidadDisponible(producto.getCantidadDisponible() - 1);
             venta.addProducto(producto);
+            venta.setTotal(venta.getTotal() + producto.getCosto());
             return this.updateVenta(venta);
         } else {
             return null;

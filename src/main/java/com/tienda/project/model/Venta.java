@@ -32,7 +32,7 @@ public class Venta {
     @JsonFormat(pattern = "dd/MM/yyyy", shape = Shape.STRING)
     private LocalDate fechaVenta;
 
-    private Double total;
+    private Double total = 0.0;
 
     @ManyToMany
 	@JsonIgnore
@@ -60,7 +60,12 @@ public class Venta {
 		this.fechaVenta = fechaVenta;
 		this.total = total;
 		this.cliente = cliente;
-	} 
+	}
+	
+	public Venta(LocalDate fechaVenta, Cliente cliente) {
+		this.fechaVenta = fechaVenta;
+		this.cliente = cliente;
+	}
 	
 	public void addProductos(List<Producto> list) {
 		for (Producto producto: list) {
