@@ -76,4 +76,10 @@ public class VentaService implements IVentaService{
         venta.remove(producto);
         return this.updateVenta(venta);
     }
+
+    @Override
+    public List<Producto> getProductosByAVenta(Long codigoVenta) {
+        Venta venta = this.getVenta(codigoVenta);
+        return venta.getListaProductos();
+    }
 }

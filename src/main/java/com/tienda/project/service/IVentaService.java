@@ -2,6 +2,7 @@ package com.tienda.project.service;
 
 import java.util.List;
 
+import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 
 public interface IVentaService {
@@ -19,4 +20,6 @@ public interface IVentaService {
     public Venta addProductoToVenta(Long codigoVenta, Long codigoProducto);
 
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto);
+
+    public List<Producto> getProductosByAVenta(Long codigoVenta);
 }
