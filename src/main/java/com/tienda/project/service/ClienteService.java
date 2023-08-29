@@ -31,9 +31,8 @@ public class ClienteService implements IClienteService{
 
     @Override
     public Cliente deleteCliente(Long idCliente) {
-        Cliente cliente = this.getCliente(idCliente);
-        clienteRepository.delete(cliente);
-        return cliente;
+        clienteRepository.deleteById(idCliente);
+        return this.getCliente(idCliente);
     }
 
     @Override
