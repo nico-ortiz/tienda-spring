@@ -67,7 +67,7 @@ public class VentaController {
 
     @PutMapping("/editar/{codigoVenta}")
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
-        ventaService.updateVenta(venta);
+        ventaService.updateVenta(codigoVenta, venta);
         return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
     }
 

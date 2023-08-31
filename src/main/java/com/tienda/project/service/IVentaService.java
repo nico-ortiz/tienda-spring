@@ -18,7 +18,7 @@ public interface IVentaService {
 
     public Venta deleteVenta(Long idVenta);
     
-    public Venta updateVenta(Venta venta);
+    public Venta updateVenta(Long idVenta, Venta venta);
 
     public Venta addProductoToVenta(Long codigoVenta, Long codigoProducto);
 

@@ -53,7 +53,8 @@ public class VentaService implements IVentaService{
     }
 
     @Override
-    public Venta updateVenta(Venta venta) {
+    public Venta updateVenta(Long idVenta, Venta venta) {
+        venta.setCodigoVenta(idVenta);
         return this.createVenta(venta);
     }
 
@@ -67,7 +68,7 @@ public class VentaService implements IVentaService{
             producto.setCantidadDisponible(producto.getCantidadDisponible() - 1);
             venta.addProducto(producto);
             venta.setTotal(venta.getTotal() + producto.getCosto());
-            return this.updateVenta(venta);
+            return this.updateVenta(venta.getCodigoVenta(), venta);
         } else {
             return null;
         }
@@ -79,7 +80,7 @@ public class VentaService implements IVentaService{
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
         venta.remove(producto);
-        return this.updateVenta(venta);
+        return this.updateVenta(codigoVenta, venta);
     }
 
     @Override
