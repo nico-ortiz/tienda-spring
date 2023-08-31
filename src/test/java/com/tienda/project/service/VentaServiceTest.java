@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +21,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dao.IClienteRepository;
 import com.tienda.project.dao.IProductoRepository;
 import com.tienda.project.dao.IVentaRepository;
+import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Cliente;
+import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,18 +49,20 @@ public class VentaServiceTest {
     void canCreateVenta() {
         //Arrange
         Cliente c1 = new Cliente(
+            1L,
             "Lionel",
             "Messi",
             "06122009"
         );
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(c1);
-        Cliente c1Expected = clienteRepository.save(c1);
 
         Venta v1 = new Venta(
+            1L,
             LocalDate.of(2022, 12, 18),
-            c1Expected
+            0.0,
+            c1
         );
         when(ventaRepository.save(any(Venta.class))).thenReturn(v1);
+        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(c1));
         
         //Act
         Venta ventaExpected = underTest.createVenta(v1);
@@ -64,6 +70,7 @@ public class VentaServiceTest {
         //Assert
         assertThat(v1).isEqualTo(ventaExpected);
         assertThat(ventaExpected.getListaProductos()).isEmpty();
+        assertThat(c1).isEqualTo(ventaExpected.getCliente());
         verify(ventaRepository, timeout(1)).save(any(Venta.class));
     }
 
@@ -86,12 +93,12 @@ public class VentaServiceTest {
             "Messi",
             "06122009"
         );
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(c1);
-        Cliente c1Expected = clienteRepository.save(c1);
 
         Venta v1 = new Venta(
+            1123L,
             LocalDate.of(2022, 12, 18),
-            c1Expected
+            0.0,
+            c1
         );
         when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(v1));
 
@@ -100,6 +107,7 @@ public class VentaServiceTest {
 
         //Assert
         assertThat(v1).isEqualTo(expectedVenta);
+        assertThat(c1.getDni()).isEqualTo(expectedVenta.getCliente().getDni());
         verify(ventaRepository, times(1)).findById(anyLong());
     }
 
@@ -148,5 +156,200 @@ public class VentaServiceTest {
         //Assert
         assertThat(newVenta.getCliente()).isEqualTo(updatedVenta.getCliente());
 
+    }
+
+    @Test
+    void canAddProductoToVenta() {
+        //Arrange
+        Venta venta = new Venta(
+            1L,
+            LocalDate.of(2018, 02, 02),
+            1200.0,
+            new Cliente (
+                "Ronaldo",
+                "Nazario",
+                "23121997"
+            )
+        );
+
+        Producto producto = new Producto(
+            2L,
+            "Camiseta Retro Instituto",
+            "Dribbling",
+            2500.0,
+            10.0
+        );
+
+        when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
+        when(productoRepository.findById(anyLong())).thenReturn(Optional.of(producto));
+        when(ventaRepository.save(any(Venta.class))).thenReturn(venta);
+        
+        //Act
+        Venta expectedVenta = underTest.addProductoToVenta(1L, 2L);
+
+        //Assert
+        assertThat(expectedVenta.getListaProductos()).contains(producto);
+        assertThat(expectedVenta.getTotal()).isEqualTo(3700.0);
+        assertThat(producto.getCantidadDisponible()).isEqualTo(9.0);
+    }
+
+    @Test
+    void canAddProductWithNoStockToVenta() {
+        //Arrange
+        Venta venta = new Venta(
+            1L,
+            LocalDate.of(2018, 02, 02),
+            1200.0,
+            new Cliente (
+                "Ronaldo",
+                "Nazario",
+                "23121997"
+            )
+        );
+
+        Producto producto = new Producto(
+            2L,
+            "Camiseta Retro Instituto",
+            "Dribbling",
+            2500.0,
+            0.0
+        );
+
+        when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
+        when(productoRepository.findById(anyLong())).thenReturn(Optional.of(producto));
+
+        //Act
+        Venta expectedVenta = underTest.addProductoToVenta(1L, 2L);
+
+        //Assert
+        assertThat(expectedVenta).isNull();
+    }
+
+    @Test
+    void canDeleteProductoToVenta() {
+        Producto producto = new Producto(
+            2L,
+            "Camiseta Retro Instituto",
+            "Diadora",
+            30000.0,
+            1918.0
+        );
+
+        Venta venta = new Venta(
+            1L,
+            LocalDate.of(2018, 02, 02),
+            1200.0,
+            new Cliente (
+                "Daniel",
+                "Jimenez",
+                "199899"
+            )
+        );
+        venta.setListaProductos(new ArrayList<>(List.of(producto)));
+        producto.setCantidadDisponible(producto.getCantidadDisponible() - 1);
+        
+        when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
+        when(productoRepository.findById(anyLong())).thenReturn(Optional.of(producto));
+        when(ventaRepository.save(any(Venta.class))).thenReturn(venta);
+
+        //Act
+        Venta ventaExpected = underTest.deleteProductoToVenta(1L, 2L);
+
+        //Assert
+        assertThat(producto).isNotIn(ventaExpected.getListaProductos());
+        assertThat(producto.getCantidadDisponible()).isEqualTo(1918.0);
+    }
+
+    @Test
+    void canGetAllProductosFromAVenta() {
+        //Arrange
+        Venta venta = new Venta(
+            1L,
+            LocalDate.of(2011, 03, 12),
+            2900.0,
+            new Cliente (
+                "David",
+                "Beckam",
+                "239899"
+            )
+        );
+        venta.setListaProductos(new ArrayList<>(List.of(new Producto(), new Producto())));
+        when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
+
+        //Act
+        List<Producto> listOfProductosExpected = underTest.getProductosByAVenta(1L);
+
+        //Assert
+        assertThat(listOfProductosExpected).isNotEmpty();
+        assertThat(listOfProductosExpected).hasSize(2);
+    }
+
+    @Test
+    void canGetTotalPriceAndTotalQuantityOfVentasFromADay() {
+        Venta v1 = new Venta(
+            1L,
+            LocalDate.of(2019, 9, 06), 
+            1100.0, 
+            new Cliente()
+        );
+        Venta v2 = new Venta(
+            2L,
+            LocalDate.of(2019, 4, 06), 
+            123.0, 
+            new Cliente()
+        );
+        Venta v3 = new Venta(
+            3L,
+            LocalDate.of(2019, 9, 06), 
+            1230.0, 
+            new Cliente()
+        );
+
+        when(ventaRepository.findAll()).thenReturn(List.of(v1, v2, v3));
+
+        //Act
+        Pair<Double> resultExpected = underTest.getTotalPriceAndTotalCountsOfVentasByADay(LocalDate.of(2019, 9, 06));
+
+        //Assert
+        assertThat(resultExpected.getFst()).isEqualTo(2330.0);
+        assertThat(resultExpected.getSnd()).isEqualTo(2.0);
+    }
+
+    @Test
+    void canGetMoreExpensiveVenta() {
+        Venta v1 = new Venta(
+            1L,
+            LocalDate.of(2019, 9, 06), 
+            1100.0, 
+            new Cliente()
+        );
+        Venta v2 = new Venta(
+            2L,
+            LocalDate.of(2019, 4, 06), 
+            123.0, 
+            new Cliente()
+        );
+        Venta v3 = new Venta(
+            3L,
+            LocalDate.of(2019, 9, 06), 
+            1230.0, 
+            new Cliente()
+        );
+        Venta v4 = new Venta(
+            4L,
+            LocalDate.of(2011, 9, 06), 
+            2100.0, 
+            new Cliente("Cylian", "Murphy", "123456789")
+        );
+
+        when(ventaRepository.findAll()).thenReturn(List.of(v1, v2, v3, v4));
+
+        //Act
+        VentaDTO ventaDTOExpected = underTest.getMoreExpensiveVenta();
+
+        //Assert
+        assertThat(ventaDTOExpected.getCodigoVenta()).isEqualTo(4L);
+        assertThat(ventaDTOExpected.getTotal()).isEqualTo(2100.0);
+        assertThat(ventaDTOExpected.getApellidoCliente()).isEqualTo("Murphy");
     }
 }
