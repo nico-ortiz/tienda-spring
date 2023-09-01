@@ -49,6 +49,14 @@ public class Venta {
 
 	public Venta() {}
 
+	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, Cliente cliente, List<Producto> listaProductos) {
+		this.codigoVenta = codigoVenta;
+		this.fechaVenta = fechaVenta;
+		this.total = total;
+		this.cliente = cliente;
+		this.listaProductos = listaProductos;
+	}
+
 	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, Cliente cliente) {
 		this.codigoVenta = codigoVenta;
 		this.fechaVenta = fechaVenta;

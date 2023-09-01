@@ -59,6 +59,7 @@ public class VentaService implements IVentaService{
     }
 
     @Override
+    //Check excetions
     public Venta addProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
@@ -71,15 +72,16 @@ public class VentaService implements IVentaService{
             return this.updateVenta(venta.getCodigoVenta(), venta);
         } else {
             return null;
-        }
-        
+        }     
     }
 
     @Override
+    //CheckExceptions
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
         venta.remove(producto);
+        producto.setCantidadDisponible(producto.getCantidadDisponible() + 1);
         return this.updateVenta(codigoVenta, venta);
     }
 
@@ -115,7 +117,6 @@ public class VentaService implements IVentaService{
                 maxVenta = venta;
             }
         }
-
         return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getCliente().getNombre(), maxVenta.getCliente().getApellido());
     }
 }
