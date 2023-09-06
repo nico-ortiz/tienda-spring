@@ -120,12 +120,6 @@ public class VentaControllerTest {
 
     @Test
     void getMoreExpensiveVentaAPI() throws Exception {
-        Venta v1 = new Venta(
-            LocalDate.of(2023, 9, 06),
-            26000.0,
-            new Cliente()
-        );
-
         Venta v2 = new Venta(
             LocalDate.of(2023, 9, 06),
             32000.0,
