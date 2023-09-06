@@ -79,12 +79,6 @@ public class ProductoControllerTest {
 
     @Test
     void getProductosStockAPI() throws Exception {
-        Producto p1 = new Producto(
-            "Camiseta Argentina",
-            "Adidas",
-            30000.0,
-            120.0
-        );
         Producto p2 = new Producto(
             1L,
             "Zapatillas",
@@ -92,7 +86,6 @@ public class ProductoControllerTest {
             30000.0,
             2.0
         );
-        
         when(productoService.getProductosWhoseStockLessThanFive()).thenReturn(List.of(p2));
 
         mockMvc.perform(get("/productos/falta_stock"))
