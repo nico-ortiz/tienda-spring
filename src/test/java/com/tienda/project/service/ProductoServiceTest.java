@@ -113,4 +113,31 @@ public class ProductoServiceTest {
         //Assert
         verify(productoRepository, times(1)).deleteById(anyLong());
     }
+
+    @Test
+    void canGetProductosWhoseStockLessThanFive() {
+        //Arrange
+        Producto p1 = new Producto(
+            1L,
+            "Zapatillas",
+            "Adidas",
+            20000.0,
+            120.0
+        );
+        Producto p2 = new Producto(
+            1L,
+            "Campera",
+            "Adidas",
+            23000.0,
+            4.0
+        );
+        when(productoRepository.findAll()).thenReturn(List.of(p1, p2));
+
+        //Act
+        List<Producto> productos = underTest.getProductosWhoseStockLessThanFive();
+
+        //Assert
+        assertThat(productos.size()).isEqualTo(1);
+        assertThat(productos.get(0).getCantidadDisponible()).isLessThan(5);
+    }
 }
