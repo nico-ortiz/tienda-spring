@@ -3,6 +3,7 @@ package com.tienda.project.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import com.tienda.project.model.Cliente;
 import com.tienda.project.service.IClienteService;
@@ -25,7 +27,8 @@ public class ClienteController {
 
     @PostMapping("/crear")
     public ResponseEntity<Cliente> createCliente(@RequestBody Cliente cliente) {
-        return ResponseEntity.ok(clienteService.createCliente(cliente));
+        Cliente clienteSaved = clienteService.createCliente(cliente);
+        return new ResponseEntity<Cliente>(clienteSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/traer")
@@ -40,7 +43,8 @@ public class ClienteController {
 
     @DeleteMapping("/eliminar/{idCliente}")
     public ResponseEntity<Cliente> deleteCliente(@PathVariable Long idCliente) {
-        return ResponseEntity.ok(clienteService.deleteCliente(idCliente));
+        Cliente clienteDeleted = clienteService.deleteCliente(idCliente);
+        return new ResponseEntity<Cliente>(clienteDeleted, HttpStatus.ACCEPTED);
     }   
 
     @PutMapping("/editar/{idCliente}")

@@ -34,7 +34,8 @@ public class VentaController {
 
     @PostMapping("/crear")
     public ResponseEntity<Venta> createVenta(@RequestBody Venta venta) {
-        return ResponseEntity.ok(ventaService.createVenta(venta));
+        Venta ventaSaved = ventaService.createVenta(venta);
+        return new ResponseEntity<Venta>(ventaSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/traer")
@@ -62,7 +63,8 @@ public class VentaController {
 
     @DeleteMapping("/eliminar/{codigoVenta}")
     public ResponseEntity<Venta> deleteVenta(@PathVariable Long codigoVenta) {
-        return ResponseEntity.ok(ventaService.deleteVenta(codigoVenta));
+        Venta ventaDeleted = ventaService.deleteVenta(codigoVenta);
+        return new ResponseEntity<Venta>(ventaDeleted, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/editar/{codigoVenta}")
