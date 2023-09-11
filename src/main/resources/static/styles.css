@@ -1,0 +1,49 @@
+html {
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: #efefef;
+}
+
+#header {
+    background-color: slateblue;
+    color: rgb(224, 221, 248);
+    padding: 2rem 2rem;
+
+}
+
+#header h2 {
+    margin: 0;
+    display: inline;
+    font-size: 3rem;
+}
+
+#nav-bar {
+    float: right;
+    width: 20rem;
+    list-style-type: none;
+    padding: 0;
+}
+
+#nav-bar li {
+    display: inline-block;
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+
+.nav-link a {
+    color: rgb(224, 221, 248);
+    font-size: 1.5rem;  
+    font-weight: 1000;
+    text-decoration: none;
+}
+
+footer {
+    background-color: #222;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 3rem;
+}
