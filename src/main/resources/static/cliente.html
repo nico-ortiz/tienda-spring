@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+    <head> 
+        <title>Store</title> 
+        <link type="text/css" rel="stylesheet" href="styles.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;1,100&display=swap" rel="stylesheet">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    </head>
+    <body>
+        <header id="header">
+            <h2><a style="text-decoration: none;" href="../index.html">Store</h2>
+            <ul id="nav-bar">
+                <li class="nav-link"><a href="#">Cliente</a></li>
+                <li class="nav-link"><a href="#">Configuracion</a></li>
+            </ul>
+        </header>
+
+        <form id="client-form" th:action="@{/clientes/crear}" th:object="${cliente}" method="post">
+            <div class="form-group">
+                <label id="nombre-label" class="label-group" for="name">Nombre</label>
+                <input id="name" class="input-group" th:field="*{nombre}" placeholder="Ingrese su nombre" checked>
+            </div>
+            <div class="form-group">
+                <label id="apellido-label" class="label-group" for="surname">Apellido</label>
+                <input id="surname" class="input-group" th:field="*{apellido}" placeholder="Ingrese su apellido" checked>
+            </div>
+            <div class="form-group">
+                <label id="dni-label" class="label-group" for="dni">DNI</label>
+                <input id="dni" class="input-group" th:field="*{dni}" placeholder="Ingrese su DNI" checked>
+            </div>
+            <div class="form-group">   
+                <button id="submit" class="input-group" type="submit">Submit</button>
+            </div>
+        </form>
+    </body>
+</html>
