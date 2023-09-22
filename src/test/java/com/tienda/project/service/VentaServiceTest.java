@@ -22,11 +22,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.tienda.project.additionalFunctions.Pair;
-import com.tienda.project.dao.IClienteRepository;
 import com.tienda.project.dao.IProductoRepository;
+import com.tienda.project.dao.IUserRepository;
 import com.tienda.project.dao.IVentaRepository;
 import com.tienda.project.dto.VentaDTO;
-import com.tienda.project.model.Cliente;
+import com.tienda.project.model.User;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 
@@ -37,7 +37,7 @@ public class VentaServiceTest {
     private IVentaRepository ventaRepository;
 
     @Mock
-    private IClienteRepository clienteRepository;
+    private IUserRepository userRepository;
 
     @Mock
     private IProductoRepository productoRepository;
@@ -48,7 +48,7 @@ public class VentaServiceTest {
     @Test
     void canCreateVenta() {
         //Arrange
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             1L,
             "Lionel",
             "Messi",
@@ -62,7 +62,7 @@ public class VentaServiceTest {
             c1
         );
         when(ventaRepository.save(any(Venta.class))).thenReturn(v1);
-        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(c1));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(c1));
         
         //Act
         Venta ventaExpected = underTest.createVenta(v1);
@@ -70,7 +70,7 @@ public class VentaServiceTest {
         //Assert
         assertThat(v1).isEqualTo(ventaExpected);
         assertThat(ventaExpected.getListaProductos()).isEmpty();
-        assertThat(c1).isEqualTo(ventaExpected.getCliente());
+        assertThat(c1).isEqualTo(ventaExpected.getUser());
         verify(ventaRepository, timeout(1)).save(any(Venta.class));
     }
 
@@ -88,7 +88,7 @@ public class VentaServiceTest {
     @Test 
     void canGetVenta() {
         //Arrange
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             "Lionel",
             "Messi",
             "06122009"
@@ -107,7 +107,7 @@ public class VentaServiceTest {
 
         //Assert
         assertThat(v1).isEqualTo(expectedVenta);
-        assertThat(c1.getDni()).isEqualTo(expectedVenta.getCliente().getDni());
+        assertThat(c1.getDni()).isEqualTo(expectedVenta.getUser().getDni());
         verify(ventaRepository, times(1)).findById(anyLong());
     }
 
@@ -131,7 +131,7 @@ public class VentaServiceTest {
             idVenta,
             LocalDate.of(2009, 12, 2), 
             0.0,
-            new Cliente (
+            new User (
                 "Zinedine",
                 "Zidane",
                 "22121998"
@@ -142,7 +142,7 @@ public class VentaServiceTest {
             originalVenta.getCodigoVenta(),
             LocalDate.of(2009, 12, 2),
             0.0,
-            new Cliente (
+            new User (
                 "Ronaldo",
                 "Nazario",
                 "23121997"
@@ -154,7 +154,7 @@ public class VentaServiceTest {
         Venta updatedVenta = underTest.updateVenta(idVenta, newVenta);
 
         //Assert
-        assertThat(newVenta.getCliente()).isEqualTo(updatedVenta.getCliente());
+        assertThat(newVenta.getUser()).isEqualTo(updatedVenta.getUser());
 
     }
 
@@ -165,7 +165,7 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2018, 02, 02),
             1200.0,
-            new Cliente (
+            new User (
                 "Ronaldo",
                 "Nazario",
                 "23121997"
@@ -200,7 +200,7 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2018, 02, 02),
             1200.0,
-            new Cliente (
+            new User (
                 "Ronaldo",
                 "Nazario",
                 "23121997"
@@ -239,7 +239,7 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2018, 02, 02),
             1200.0,
-            new Cliente (
+            new User (
                 "Daniel",
                 "Jimenez",
                 "199899"
@@ -267,7 +267,7 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2011, 03, 12),
             2900.0,
-            new Cliente (
+            new User (
                 "David",
                 "Beckam",
                 "239899"
@@ -290,19 +290,19 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2019, 9, 06), 
             1100.0, 
-            new Cliente()
+            new User()
         );
         Venta v2 = new Venta(
             2L,
             LocalDate.of(2019, 4, 06), 
             123.0, 
-            new Cliente()
+            new User()
         );
         Venta v3 = new Venta(
             3L,
             LocalDate.of(2019, 9, 06), 
             1230.0, 
-            new Cliente()
+            new User()
         );
 
         when(ventaRepository.findAll()).thenReturn(List.of(v1, v2, v3));
@@ -321,25 +321,25 @@ public class VentaServiceTest {
             1L,
             LocalDate.of(2019, 9, 06), 
             1100.0, 
-            new Cliente()
+            new User()
         );
         Venta v2 = new Venta(
             2L,
             LocalDate.of(2019, 4, 06), 
             123.0, 
-            new Cliente()
+            new User()
         );
         Venta v3 = new Venta(
             3L,
             LocalDate.of(2019, 9, 06), 
             1230.0, 
-            new Cliente()
+            new User()
         );
         Venta v4 = new Venta(
             4L,
             LocalDate.of(2011, 9, 06), 
             2100.0, 
-            new Cliente("Cylian", "Murphy", "123456789")
+            new User("Cylian", "Murphy", "123456789")
         );
 
         when(ventaRepository.findAll()).thenReturn(List.of(v1, v2, v3, v4));

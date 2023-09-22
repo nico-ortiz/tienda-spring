@@ -20,8 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dto.VentaDTO;
-import com.tienda.project.model.Cliente;
 import com.tienda.project.model.Producto;
+import com.tienda.project.model.User;
 import com.tienda.project.model.Venta;
 import com.tienda.project.service.VentaService;
 
@@ -39,7 +39,7 @@ public class VentaControllerTest {
 
     @Test
     void addProductoToVentaAPI() throws Exception {
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             "Ronaldo",
             "Nazario",
             "123123123"
@@ -73,7 +73,7 @@ public class VentaControllerTest {
             2L,
             LocalDate.of(2023, 9, 06),
             26000.0,
-            new Cliente()
+            new User()
         );
 
         Producto producto = new Producto(
@@ -92,7 +92,7 @@ public class VentaControllerTest {
 
     @Test
     void createVentaAPI() throws Exception {
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             "Ronaldo",
             "Nazario",
             "123123123"
@@ -123,10 +123,10 @@ public class VentaControllerTest {
         Venta v2 = new Venta(
             LocalDate.of(2023, 9, 06),
             32000.0,
-            new Cliente()
+            new User()
         );
         when(ventaService.getMoreExpensiveVenta()).thenReturn(
-            new VentaDTO(v2.getCodigoVenta(), v2.getTotal(), v2.getListaProductos().size(), v2.getCliente().getNombre(), v2.getCliente().getApellido())
+            new VentaDTO(v2.getCodigoVenta(), v2.getTotal(), v2.getListaProductos().size(), v2.getUser().getNombre(), v2.getUser().getApellido())
         );
 
         mockMvc.perform(get("/ventas/mayorVenta"))
@@ -140,7 +140,7 @@ public class VentaControllerTest {
             1L,
             LocalDate.of(2023, 9, 06),
             26000.0,
-            new Cliente()
+            new User()
         );
         Producto p1 = new Producto(
             1L,
@@ -168,13 +168,13 @@ public class VentaControllerTest {
         Venta v1 = new Venta(
             LocalDate.of(2023, 9, 06),
             26000.0,
-            new Cliente()
+            new User()
         );
 
         Venta v2 = new Venta(
             LocalDate.of(2023, 9, 06),
             32000.0,
-            new Cliente()
+            new User()
         );
         when(ventaService.getTotalPriceAndTotalCountsOfVentasByADay(LocalDate.of(2023, 9, 06)))
             .thenReturn(new Pair<Double>(v1.getTotal() + v2.getTotal(), 2.0));
@@ -185,7 +185,7 @@ public class VentaControllerTest {
 
     @Test
     void getVentaAPI() throws Exception {
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             "Ronaldo",
             "Nazario",
             "123123123"
@@ -213,7 +213,7 @@ public class VentaControllerTest {
 
     @Test
     void updateVentaAPI() throws Exception {
-        Cliente cliente = new Cliente(
+        User cliente = new User(
             "Osvaldo",
             "Ardiles",
             "14443322"

@@ -45,34 +45,34 @@ public class Venta {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
-    private Cliente cliente;
+    private User user;
 
 	public Venta() {}
 
-	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, Cliente cliente, List<Producto> listaProductos) {
+	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, User user, List<Producto> listaProductos) {
 		this.codigoVenta = codigoVenta;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
-		this.cliente = cliente;
+		this.user = user;
 		this.listaProductos = listaProductos;
 	}
 
-	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, Cliente cliente) {
+	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, User user) {
 		this.codigoVenta = codigoVenta;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
-		this.cliente = cliente;
+		this.user = user;
 	}
 
-	public Venta(LocalDate fechaVenta, Double total, Cliente cliente) {
+	public Venta(LocalDate fechaVenta, Double total, User user) {
 		this.fechaVenta = fechaVenta;
 		this.total = total;
-		this.cliente = cliente;
+		this.user = user;
 	}
 	
-	public Venta(LocalDate fechaVenta, Cliente cliente) {
+	public Venta(LocalDate fechaVenta, User user) {
 		this.fechaVenta = fechaVenta;
-		this.cliente = cliente;
+		this.user = user;
 	}
 	
 	public void addProductos(List<Producto> list) {

@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tienda.project.additionalFunctions.Pair;
-import com.tienda.project.dao.IClienteRepository;
 import com.tienda.project.dao.IProductoRepository;
+import com.tienda.project.dao.IUserRepository;
 import com.tienda.project.dao.IVentaRepository;
 import com.tienda.project.dto.VentaDTO;
-import com.tienda.project.model.Cliente;
 import com.tienda.project.model.Producto;
+import com.tienda.project.model.User;
 import com.tienda.project.model.Venta;
 
 @Service
@@ -22,16 +22,16 @@ public class VentaService implements IVentaService{
     private IVentaRepository ventaRepository;
 
     @Autowired
-    private IClienteRepository clienteRepository;
+    private IUserRepository userRepository;
 
     @Autowired
     private IProductoRepository productoRepository;
 
     @Override
     public Venta createVenta(Venta venta) {
-        Long idCliente = venta.getCliente().getIdCliente();
-        Cliente cliente = clienteRepository.findById(idCliente).orElse(null);
-        venta.setCliente(cliente);
+        Long idUser = venta.getUser().getIdUser();
+        User user = userRepository.findById(idUser).orElse(null);
+        venta.setUser(user);
         return ventaRepository.save(venta);
     }
 
@@ -117,6 +117,6 @@ public class VentaService implements IVentaService{
                 maxVenta = venta;
             }
         }
-        return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getCliente().getNombre(), maxVenta.getCliente().getApellido());
+        return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getUser().getNombre(), maxVenta.getUser().getApellido());
     }
 }

@@ -17,93 +17,93 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.tienda.project.dao.IClienteRepository;
-import com.tienda.project.model.Cliente;
+import com.tienda.project.dao.IUserRepository;
+import com.tienda.project.model.User;
 
 @ExtendWith(MockitoExtension.class)
-public class ClienteServiceTest {
+public class UserServiceTest {
     
     @Mock
-    private IClienteRepository clienteRepository;
+    private IUserRepository userRepository;
 
     @InjectMocks
-    private ClienteService underTest;
+    private UserService underTest;
 
     @Test
     void canCreateCliente() {
         //Arrange    
-        Cliente c1 = new Cliente(
+        User c1 = new User(
             "Ronaldo",
             "Nazario",
             "23121997"
         );   
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(c1);
+        when(userRepository.save(any(User.class))).thenReturn(c1);
 
         //Act
-        Cliente clienteSaved = underTest.createCliente(c1);
+        User clienteSaved = underTest.createUser(c1);
         
         //Assert
         assertThat(clienteSaved).isEqualTo(c1);
-        verify(clienteRepository, times(1)).save(any(Cliente.class));
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void canGetCliente() {
         //Arrange
-        Cliente c2 = new Cliente(
+        User c2 = new User(
             "Lionel",
             "Messi",
             "06122009"
         );
-        when(clienteRepository.findById(anyLong())).thenReturn(Optional.of(c2));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(c2));
 
         //Act
         //idCliente should be random
-        Cliente cliente = underTest.getCliente(1L);
+        User cliente = underTest.getUser(1L);
 
         //Assert
         assertThat(cliente).usingRecursiveComparison().isEqualTo(c2);
-        verify(clienteRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
     }
 
     @Test
     void canGetAllClientes() {
         //Arrange
-        when(clienteRepository.findAll()).thenReturn((List.of(new Cliente(), new Cliente())));
+        when(userRepository.findAll()).thenReturn((List.of(new User(), new User())));
         
         //Act        
         //Assert
-        assertThat(underTest.getClientes()).hasSize(2);
-        verify(clienteRepository, times(1)).findAll();
+        assertThat(underTest.getUsers()).hasSize(2);
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
     void canUpdateCliente() {
         //Arrange
-        Cliente c3 = new Cliente(
+        User c3 = new User(
             "Zinedine",
             "Zidane",
             "22121998"
         );
-        when(clienteRepository.save(any(Cliente.class))).thenReturn(c3);
+        when(userRepository.save(any(User.class))).thenReturn(c3);
         
         //Act
-        Cliente clienteUpdated = underTest.updateCliente(1L, c3);
+        User clienteUpdated = underTest.updateUser(1L, c3);
         
         //Assert
         assertThat(clienteUpdated).isNotNull();
         assertThat(clienteUpdated).isEqualTo(c3);
-        verify(clienteRepository, times(1)).save(any(Cliente.class));
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void canDeleteCliente() {
         //Arrange
-        doNothing().when(clienteRepository).deleteById(anyLong());
+        doNothing().when(userRepository).deleteById(anyLong());
 
         //Act and Assert
         //idCliente should be random or the id of a client
-        underTest.deleteCliente(1L);    
-        verify(clienteRepository, times(1)).deleteById(anyLong());
+        underTest.deleteUser(1L);    
+        verify(userRepository, times(1)).deleteById(anyLong());
     }
 }

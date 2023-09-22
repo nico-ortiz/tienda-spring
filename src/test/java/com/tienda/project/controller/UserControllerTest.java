@@ -8,8 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tienda.project.model.Cliente;
-import com.tienda.project.service.ClienteService;
+import com.tienda.project.model.User;
+import com.tienda.project.service.UserService;
+import com.tienda.project.service.UserService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -19,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-@WebMvcTest(ClienteController.class)
-public class ClienteControllerTest {
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
     
     @Autowired
     private MockMvc mockMvc;
@@ -29,60 +30,60 @@ public class ClienteControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ClienteService clienteService;
+    private UserService userService;
 
     @Test
-    void createClienteAPI() throws Exception {
-        Cliente cliente = new Cliente(
+    void createUserAPI() throws Exception {
+        User user = new User(
             "Ronaldo",
             "Nazario",
             "12131998"
         );
-        when(clienteService.createCliente(cliente)).thenReturn(cliente);
+        when(userService.createUser(user)).thenReturn(user);
 
-        mockMvc.perform(post("/clientes/crear")
+        mockMvc.perform(post("/users/crear")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(cliente)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    void deleteClienteAPI() throws Exception {
-        when(clienteService.deleteCliente(anyLong())).thenReturn(any(Cliente.class));
-        mockMvc.perform(delete("/clientes/eliminar/{idCliente}", 1L))
+    void deleteUserAPI() throws Exception {
+        when(userService.deleteUser(anyLong())).thenReturn(any(User.class));
+        mockMvc.perform(delete("/users/eliminar/{idUser}", 1L))
                 .andExpect(status().isAccepted());
     }
 
     @Test
-    void getClienteAPI() throws Exception{
-        Cliente cliente = new Cliente("Nicolas", "Ortiz", "12222122");
-        when(clienteService.getCliente(1L)).thenReturn(cliente);
+    void getUserAPI() throws Exception{
+        User User = new User("Nicolas", "Ortiz", "12222122");
+        when(userService.getUser(1L)).thenReturn(User);
 
-        mockMvc.perform(get("/clientes/{idCliente}", 1L))
+        mockMvc.perform(get("/users/{idUser}", 1L))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void getClientesAPI() throws Exception{
-        when(clienteService.getClientes()).thenReturn(List.of(new Cliente(), new Cliente()));
+    void getUsersAPI() throws Exception{
+        when(userService.getUsers()).thenReturn(List.of(new User(), new User()));
 
-        mockMvc.perform(get("/clientes/traer"))
+        mockMvc.perform(get("/users/traer"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void updateClienteAPI() throws Exception{
-        Cliente clienteUpdated = new Cliente(
+    void updateUserAPI() throws Exception{
+        User userUpdated = new User(
             "Zinedine",
             "Zidane",
             "1234444232"
         );
 
-        when(clienteService.updateCliente(2L, clienteUpdated)).thenReturn(clienteUpdated);
+        when(userService.updateUser(2L, userUpdated)).thenReturn(userUpdated);
 
-        mockMvc.perform(put("/clientes/editar/{idCliente}", 1L)
+        mockMvc.perform(put("/users/editar/{idUser}", 1L)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(clienteUpdated)))
+                    .content(objectMapper.writeValueAsString(userUpdated)))
                 .andExpect(status().isOk());
 
     }
