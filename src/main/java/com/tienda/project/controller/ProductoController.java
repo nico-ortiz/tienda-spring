@@ -3,6 +3,7 @@ package com.tienda.project.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,8 @@ public class ProductoController {
 
     @PostMapping("/crear")
     public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
-        return ResponseEntity.ok(productoService.createProducto(producto));
+        Producto productoSaved = productoService.createProducto(producto);
+        return new ResponseEntity<Producto>(productoSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/traer")
@@ -40,12 +42,18 @@ public class ProductoController {
 
     @DeleteMapping("/eliminar/{codigoProducto}")
     public ResponseEntity<Producto> deleteProduct(@PathVariable Long codigoProducto) {
-        return ResponseEntity.ok(productoService.deleteProducto(codigoProducto));
+        Producto productoDeleted = productoService.deleteProducto(codigoProducto);
+        return new ResponseEntity<Producto>(productoDeleted, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/editar/{codigoProducto}")
     public ResponseEntity<Producto> updateProducto(@PathVariable Long codigoProducto, @RequestBody Producto producto) {        
-        productoService.updateProducto(producto);
+        productoService.updateProducto(codigoProducto, producto);
         return ResponseEntity.ok(productoService.getProducto(producto.getCodigoProducto()));
+    }
+
+    @GetMapping("/falta_stock")
+    public ResponseEntity<List<Producto>> getProductosStock() {
+        return ResponseEntity.ok(productoService.getProductosWhoseStockLessThanFive());
     }
 }

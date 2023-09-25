@@ -32,7 +32,7 @@ public class Venta {
     @JsonFormat(pattern = "dd/MM/yyyy", shape = Shape.STRING)
     private LocalDate fechaVenta;
 
-    private Double total;
+    private Double total = 0.0;
 
     @ManyToMany
 	@JsonIgnore
@@ -45,22 +45,35 @@ public class Venta {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
-    private Cliente cliente;
+    private User user;
 
 	public Venta() {}
 
-	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, Cliente cliente) {
+	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, User user, List<Producto> listaProductos) {
 		this.codigoVenta = codigoVenta;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
-		this.cliente = cliente;
+		this.user = user;
+		this.listaProductos = listaProductos;
 	}
 
-	public Venta(LocalDate fechaVenta, Double total, Cliente cliente) {
+	public Venta(Long codigoVenta, LocalDate fechaVenta, Double total, User user) {
+		this.codigoVenta = codigoVenta;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
-		this.cliente = cliente;
-	} 
+		this.user = user;
+	}
+
+	public Venta(LocalDate fechaVenta, Double total, User user) {
+		this.fechaVenta = fechaVenta;
+		this.total = total;
+		this.user = user;
+	}
+	
+	public Venta(LocalDate fechaVenta, User user) {
+		this.fechaVenta = fechaVenta;
+		this.user = user;
+	}
 	
 	public void addProductos(List<Producto> list) {
 		for (Producto producto: list) {

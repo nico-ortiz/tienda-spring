@@ -1,10 +1,12 @@
 package com.tienda.project.controller;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +15,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tienda.project.additionalFunctions.Pair;
+import com.tienda.project.dto.VentaDTO;
+import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
 import com.tienda.project.service.IVentaService;
 
-import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/ventas")
@@ -29,7 +34,8 @@ public class VentaController {
 
     @PostMapping("/crear")
     public ResponseEntity<Venta> createVenta(@RequestBody Venta venta) {
-        return ResponseEntity.ok(ventaService.createVenta(venta));
+        Venta ventaSaved = ventaService.createVenta(venta);
+        return new ResponseEntity<Venta>(ventaSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/traer")
@@ -57,12 +63,37 @@ public class VentaController {
 
     @DeleteMapping("/eliminar/{codigoVenta}")
     public ResponseEntity<Venta> deleteVenta(@PathVariable Long codigoVenta) {
-        return ResponseEntity.ok(ventaService.deleteVenta(codigoVenta));
+        Venta ventaDeleted = ventaService.deleteVenta(codigoVenta);
+        return new ResponseEntity<Venta>(ventaDeleted, HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/editar/{codigoVenta}")
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
-        ventaService.updateVenta(venta);
+        ventaService.updateVenta(codigoVenta, venta);
         return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
+    }
+
+    @GetMapping("/productos/{codigoVenta}")
+    public ResponseEntity<List<Producto>> getProductosByAVenta(@PathVariable Long codigoVenta) {
+        return ResponseEntity.ok(ventaService.getProductosByAVenta(codigoVenta));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Map<String, Double>> getTotalVentasByADay(
+        @RequestParam(name = "fechaVenta") LocalDate fechaVenta) {
+        Pair<Double> pair = ventaService.getTotalPriceAndTotalCountsOfVentasByADay(fechaVenta);
+        Double totalPrice = pair.getFst();
+        Double totalCount = pair.getSnd();
+        Map<String, Double> json = new HashMap<>();
+        
+        json.put("totalPrice", totalPrice);
+        json.put("totalCount", totalCount);
+
+        return ResponseEntity.ok(json);
+    }
+
+    @GetMapping("/mayorVenta")
+    public ResponseEntity<VentaDTO> getMoreExpensiveVenta() {
+        return ResponseEntity.ok(ventaService.getMoreExpensiveVenta());
     }
 }
