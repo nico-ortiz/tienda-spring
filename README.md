@@ -1,5 +1,13 @@
 # Spring Boot CRUD Application 
-_Java Version 17.0+_
+
+##  Requirements
+
+For building and running the application you need:
+
+- Java Version 17.0+
+- Maven 3
+
+## How to run 
 
 Run command: 
 
