@@ -49,9 +49,23 @@ public class ProductoControllerTest {
 
     @Test
     void deleteProductAPI() throws Exception {
-        when(productoService.deleteProducto(anyLong())).thenReturn(any(Producto.class));
+        Producto producto = new Producto(
+            1L,
+            "Camiseta Argentina",
+            "Adidas",
+            30000.0,
+            120.0
+        );
+        when(productoService.deleteProducto(1L)).thenReturn(producto);
         mockMvc.perform(delete("/productos/eliminar/{codigoProducto}", 1L))
                 .andExpect(status().isAccepted());
+    }
+
+    @Test
+    void canDeleteProductAPI() throws Exception {
+        when(productoService.deleteProducto(anyLong())).thenReturn(null);
+        mockMvc.perform(delete("/productos/eliminar/{codigoProducto}", 1L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -67,6 +81,14 @@ public class ProductoControllerTest {
 
         mockMvc.perform(get("/productos/{codigoProducto}", 1L))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void cantGetProductoAPI() throws Exception {
+        when(productoService.getProducto(2L)).thenReturn(null);
+
+        mockMvc.perform(get("/productos/{codigoProducto}", 2L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -101,14 +123,31 @@ public class ProductoControllerTest {
             20000.0,
             20.0
         );
-        when(productoService.updateProducto(p1.getCodigoProducto(), p1)).thenReturn(p1);
+        when(productoService.updateProducto(p1)).thenReturn(p1);
+        when(productoService.getProducto(1L)).thenReturn(p1);
 
-        mockMvc.perform(put("/productos/editar/{codigoProducto}", p1.getCodigoProducto())
+        mockMvc.perform(put("/productos/editar/{codigoProducto}", p1.getCodigoProducto(), p1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(p1)))
                 .andExpect(status().isOk());
             
     }
 
+    @Test
+    void cantUpdateProductoAPI() throws Exception{
+        Producto p1 = new Producto(
+            "Camiseta Argentina",
+            "Adidas",
+            20000.0,
+            20.0
+        );
+        when(productoService.getProducto(1L)).thenReturn(null);
+
+        mockMvc.perform(put("/productos/editar/{codigoProducto}", p1.getCodigoProducto(), p1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(p1)))
+                .andExpect(status().isNotFound());
+            
+    }
 
 }

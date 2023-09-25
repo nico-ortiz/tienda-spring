@@ -94,7 +94,7 @@ public class ProductoServiceTest {
         when(productoRepository.save(any(Producto.class))).thenReturn(p3);
 
         //Act
-        Producto expectedProducto = underTest.updateProducto(1L, p3);
+        Producto expectedProducto = underTest.updateProducto(p3);
 
         //Assert
         assertThat(expectedProducto).isNotNull();

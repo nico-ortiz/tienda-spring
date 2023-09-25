@@ -3,6 +3,7 @@ package com.tienda.project.service;
 import java.util.List;
 
 import com.tienda.project.model.Producto;
+import com.tienda.project.model.Venta;
 
 public interface IProductoService {
     
@@ -14,7 +15,9 @@ public interface IProductoService {
 
     public Producto deleteProducto(Long codigoProducto);
 
-    public Producto updateProducto(Long codigoProducto, Producto producto);
+    public Producto updateProducto(Producto producto);
 
     public List<Producto> getProductosWhoseStockLessThanFive();
+
+    public List<Venta> getVentasByCodigoProducto(Long codigoProducto);
 }
