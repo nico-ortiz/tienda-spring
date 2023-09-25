@@ -44,7 +44,7 @@ public class Venta {
     private List<Producto> listaProductos = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
+    @JoinColumn(name = "user_id", referencedColumnName = "idUser")
     private User user;
 
 	public Venta() {}
