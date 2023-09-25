@@ -6,3 +6,13 @@ Run command:
 ```
 ./mvnw spring-boot:run
 ```
+Run tests:
+
+```
+./mvnw test
+```
+
+To run especific test:
+```
+./mvnw test -Dtest="<test class name>"
+```
