@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tienda.project.model.User;
 import com.tienda.project.service.UserService;
-import com.tienda.project.service.UserService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
