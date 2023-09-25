@@ -38,18 +38,31 @@ public class UserController {
 
     @GetMapping("/{idUser}")
     public ResponseEntity<User> getUser(@PathVariable Long idUser) {
-        return ResponseEntity.ok(userService.getUser(idUser));
+        User user = userService.getUser(idUser);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        }
+        return new ResponseEntity<User>(user, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/eliminar/{idUser}")
     public ResponseEntity<User> deleteUser(@PathVariable Long idUser) {
         User userDeleted = userService.deleteUser(idUser);
+        if (userDeleted == null) {
+            return new ResponseEntity<User>(userDeleted, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<User>(userDeleted, HttpStatus.ACCEPTED);
     }   
 
     @PutMapping("/editar/{idUser}")
     public ResponseEntity<User> updateUser(@PathVariable Long idUser, @RequestBody User user) {
-        userService.updateUser(idUser, user);
-        return ResponseEntity.ok(userService.getUser(user.getIdUser()));
+        User userToUpdate = userService.getUser(idUser);
+        if (userToUpdate == null) {
+            return new ResponseEntity<User>(user, HttpStatus.NOT_FOUND);
+        } else {
+            user.setIdUser(idUser);
+            userService.updateUser(user);
+            return ResponseEntity.ok(userService.getUser(user.getIdUser()));
+        }
     }
 }

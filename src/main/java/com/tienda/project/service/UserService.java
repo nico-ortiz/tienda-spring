@@ -31,13 +31,13 @@ public class UserService implements IUserService {
 
     @Override
     public User deleteUser(Long idUser) {
+        User user = this.getUser(idUser);
         userRepository.deleteById(idUser);
-        return this.getUser(idUser);
+        return user;
     }
 
     @Override
-    public User updateUser(Long idUser, User user) {
-        return this.createUser(user);
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
-    
 }

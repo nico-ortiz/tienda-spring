@@ -30,7 +30,7 @@ public class UserServiceTest {
     private UserService underTest;
 
     @Test
-    void canCreateCliente() {
+    void canCreateUser() {
         //Arrange    
         User c1 = new User(
             "Ronaldo",
@@ -40,15 +40,15 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(c1);
 
         //Act
-        User clienteSaved = underTest.createUser(c1);
+        User userSaved = underTest.createUser(c1);
         
         //Assert
-        assertThat(clienteSaved).isEqualTo(c1);
+        assertThat(userSaved).isEqualTo(c1);
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void canGetCliente() {
+    void canGetUser() {
         //Arrange
         User c2 = new User(
             "Lionel",
@@ -58,16 +58,16 @@ public class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(c2));
 
         //Act
-        //idCliente should be random
-        User cliente = underTest.getUser(1L);
+        //idUser should be random
+        User User = underTest.getUser(1L);
 
         //Assert
-        assertThat(cliente).usingRecursiveComparison().isEqualTo(c2);
+        assertThat(User).usingRecursiveComparison().isEqualTo(c2);
         verify(userRepository, times(1)).findById(anyLong());
     }
 
     @Test
-    void canGetAllClientes() {
+    void canGetAllUsers() {
         //Arrange
         when(userRepository.findAll()).thenReturn((List.of(new User(), new User())));
         
@@ -78,7 +78,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void canUpdateCliente() {
+    void canUpdateUser() {
         //Arrange
         User c3 = new User(
             "Zinedine",
@@ -88,21 +88,21 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(c3);
         
         //Act
-        User clienteUpdated = underTest.updateUser(1L, c3);
+        User userUpdated = underTest.updateUser(c3);
         
         //Assert
-        assertThat(clienteUpdated).isNotNull();
-        assertThat(clienteUpdated).isEqualTo(c3);
+        assertThat(userUpdated).isNotNull();
+        assertThat(userUpdated).isEqualTo(c3);
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void canDeleteCliente() {
+    void canDeleteUser() {
         //Arrange
         doNothing().when(userRepository).deleteById(anyLong());
 
         //Act and Assert
-        //idCliente should be random or the id of a client
+        //idUser should be random or the id of a client
         underTest.deleteUser(1L);    
         verify(userRepository, times(1)).deleteById(anyLong());
     }
