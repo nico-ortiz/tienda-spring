@@ -21,8 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
+import com.tienda.project.model.Role;
 import com.tienda.project.model.User;
 import com.tienda.project.model.Venta;
+import com.tienda.project.service.ProductoService;
+import com.tienda.project.service.UserService;
 import com.tienda.project.service.VentaService;
 
 @WebMvcTest(VentaController.class)
@@ -34,68 +37,24 @@ public class VentaControllerTest {
     @MockBean
     private VentaService ventaService;
 
+    @MockBean
+    private UserService userService;
+
+    @MockBean
+    private ProductoService productoService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    void addProductoToVentaAPI() throws Exception {
-        User c1 = new User(
-            "Ronaldo",
-            "Nazario",
-            "123123123"
-        );
-
-        Venta venta = new Venta(
-            2L,
-            LocalDate.of(2023, 9, 06),
-            26000.0,
-            c1
-        );
-
-        Producto producto = new Producto(
-            33L,
-            "Arroz",
-            "Mas",
-            250.0,
-            15.0
-        );
-        when(ventaService.addProductoToVenta(2L, 33L)).thenReturn(venta);
-
-        mockMvc.perform(put("/ventas/{codigoVenta}/listaProductos/{codigoProducto}", venta.getCodigoVenta(), producto.getCodigoProducto())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(venta)))
-                    .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldntAddProductoToVentaAPI() throws Exception{
-        Venta venta = new Venta(
-            2L,
-            LocalDate.of(2023, 9, 06),
-            26000.0,
-            new User()
-        );
-
-        Producto producto = new Producto(
-            33L,
-            "Arroz",
-            "Mas",
-            250.0,
-            0.0
-        );
-        when(ventaService.addProductoToVenta(2L, 33L)).thenReturn(null);
-        mockMvc.perform(put("/ventas/{codigoVenta}/listaProductos/{codigoProducto}", venta.getCodigoVenta(), producto.getCodigoProducto())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(venta)))
-                    .andExpect(status().isMethodNotAllowed());
-    }
-
-    @Test
     void createVentaAPI() throws Exception {
         User c1 = new User(
+            1L,
             "Ronaldo",
             "Nazario",
-            "123123123"
+            "123123123",
+            "",
+            Role.USER
         );
 
         Venta venta = new Venta(
@@ -103,7 +62,7 @@ public class VentaControllerTest {
             26000.0,
             c1
         );
-        when(ventaService.createVenta(venta)).thenReturn(venta);
+        when(ventaService.createVenta(any(Venta.class))).thenReturn(venta);
         
         mockMvc.perform(post("/ventas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,12 +71,49 @@ public class VentaControllerTest {
     }
 
     @Test
+    void cantCreateVentaAPI() throws Exception {
+        User c1 = new User(
+            1L,
+            "Ronaldo",
+            "Nazario",
+            "123123123",
+            "",
+            Role.USER
+        );
+
+        Venta venta = new Venta(
+            2L,
+            LocalDate.of(2023, 9, 06),
+            26000.0,
+            c1
+        );
+        when(ventaService.createVenta(venta)).thenReturn(null);
+        
+        mockMvc.perform(post("/ventas/crear")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(venta)))
+                    .andExpect(status().isNotFound());
+    }
+
+    @Test
     void deleteVentaAPI() throws Exception {
-        when(ventaService.deleteVenta(anyLong())).thenReturn(any(Venta.class));
-        mockMvc.perform(delete("/ventas/eliminar/{codigoVenta}", 1L))
+        Venta venta = new Venta(
+            2L,
+            LocalDate.of(2023, 9, 06),
+            26000.0,
+            new User()
+        );
+        when(ventaService.deleteVenta(anyLong())).thenReturn(venta);
+        mockMvc.perform(delete("/ventas/eliminar/{codigoVenta}", 2L))
                 .andExpect(status().isAccepted());        
     }
 
+    @Test
+    void cantDeleteVentaAPI() throws Exception {
+        when(ventaService.deleteVenta(anyLong())).thenReturn(null);
+        mockMvc.perform(delete("/ventas/eliminar/{codigoVenta}", 2L))
+                .andExpect(status().isNotFound());        
+    }
     @Test
     void getMoreExpensiveVentaAPI() throws Exception {
         Venta v2 = new Venta(
@@ -214,22 +210,96 @@ public class VentaControllerTest {
     @Test
     void updateVentaAPI() throws Exception {
         User cliente = new User(
+            1L,
             "Osvaldo",
             "Ardiles",
             "14443322"
         );
 
-        Venta venta = new Venta(
-            13L,
+        Venta ventaToUpdate = new Venta(
+            23L,
             LocalDate.of(1988, 12, 16),
             6000.0,
             cliente
         );
-        when(ventaService.updateVenta(venta.getCodigoVenta(), venta)).thenReturn(venta);
 
-        mockMvc.perform(put("/ventas/editar/{codigoVenta}", venta.getCodigoVenta())
+        Venta venta = new Venta(
+            23L,
+            LocalDate.of(1918, 02, 16),
+            4000.0,
+            cliente
+        );
+        when(ventaService.getVenta(anyLong())).thenReturn(ventaToUpdate);
+        when(userService.getUser(anyLong())).thenReturn(cliente);
+        when(ventaService.updateVenta(anyLong(), any(Venta.class))).thenReturn(ventaToUpdate);
+        when(ventaService.createVenta(any(Venta.class))).thenReturn(ventaToUpdate);
+        when(ventaService.getVenta(anyLong())).thenReturn(venta);
+        
+        mockMvc.perform(put("/ventas/editar/{codigoVenta}", 23L, venta)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(venta)))
                     .andExpect(status().isOk());
     }
+
+        @Test
+    void cantUpdateNotExistedVentaAPI() throws Exception {
+        User cliente = new User(
+            1L,
+            "Osvaldo",
+            "Ardiles",
+            "14443322"
+        );
+
+        Venta ventaToUpdate = new Venta(
+            23L,
+            LocalDate.of(1988, 12, 16),
+            6000.0,
+            cliente
+        );
+
+        Venta venta = new Venta(
+            23L,
+            LocalDate.of(1918, 02, 16),
+            4000.0,
+            cliente
+        );
+        when(ventaService.getVenta(anyLong())).thenReturn(null);
+        
+        mockMvc.perform(put("/ventas/editar/{codigoVenta}", 23L, venta)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(venta)))
+                    .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void cantUpdateVentaNotExistsUserAPI() throws Exception {
+        User cliente = new User(
+            1L,
+            "Osvaldo",
+            "Ardiles",
+            "14443322"
+        );
+
+        Venta ventaToUpdate = new Venta(
+            23L,
+            LocalDate.of(1988, 12, 16),
+            6000.0,
+            cliente
+        );
+
+        Venta venta = new Venta(
+            23L,
+            LocalDate.of(1918, 02, 16),
+            4000.0,
+            cliente
+        );
+        when(ventaService.getVenta(anyLong())).thenReturn(ventaToUpdate);
+        when(userService.getUser(anyLong())).thenReturn(null);
+        
+        mockMvc.perform(put("/ventas/editar/{codigoVenta}", 23L, venta)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(venta)))
+                    .andExpect(status().isNotFound());
+    }
+
 }

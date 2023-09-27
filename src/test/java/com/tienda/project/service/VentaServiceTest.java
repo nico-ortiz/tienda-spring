@@ -132,6 +132,7 @@ public class VentaServiceTest {
             LocalDate.of(2009, 12, 2), 
             0.0,
             new User (
+                1L,
                 "Zinedine",
                 "Zidane",
                 "22121998"
@@ -143,12 +144,14 @@ public class VentaServiceTest {
             LocalDate.of(2009, 12, 2),
             0.0,
             new User (
+                1L,
                 "Ronaldo",
                 "Nazario",
                 "23121997"
             )
         );
         when(ventaRepository.save(any(Venta.class))).thenReturn(newVenta);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(newVenta.getUser()));
         
         //Act 
         Venta updatedVenta = underTest.updateVenta(idVenta, newVenta);
@@ -166,6 +169,7 @@ public class VentaServiceTest {
             LocalDate.of(2018, 02, 02),
             1200.0,
             new User (
+                23L,
                 "Ronaldo",
                 "Nazario",
                 "23121997"
@@ -181,6 +185,7 @@ public class VentaServiceTest {
         );
 
         when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
+        when(userRepository.findById(23L)).thenReturn(Optional.of(venta.getUser()));
         when(productoRepository.findById(anyLong())).thenReturn(Optional.of(producto));
         when(ventaRepository.save(any(Venta.class))).thenReturn(venta);
         
@@ -240,6 +245,7 @@ public class VentaServiceTest {
             LocalDate.of(2018, 02, 02),
             1200.0,
             new User (
+                1L,
                 "Daniel",
                 "Jimenez",
                 "199899"
@@ -251,6 +257,7 @@ public class VentaServiceTest {
         when(ventaRepository.findById(anyLong())).thenReturn(Optional.of(venta));
         when(productoRepository.findById(anyLong())).thenReturn(Optional.of(producto));
         when(ventaRepository.save(any(Venta.class))).thenReturn(venta);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(venta.getUser()));
 
         //Act
         Venta ventaExpected = underTest.deleteProductoToVenta(1L, 2L);
