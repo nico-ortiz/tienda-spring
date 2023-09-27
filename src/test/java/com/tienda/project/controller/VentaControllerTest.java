@@ -250,13 +250,6 @@ public class VentaControllerTest {
             "14443322"
         );
 
-        Venta ventaToUpdate = new Venta(
-            23L,
-            LocalDate.of(1988, 12, 16),
-            6000.0,
-            cliente
-        );
-
         Venta venta = new Venta(
             23L,
             LocalDate.of(1918, 02, 16),
