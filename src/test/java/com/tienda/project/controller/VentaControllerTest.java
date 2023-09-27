@@ -153,10 +153,40 @@ public class VentaControllerTest {
             2.0
         );
         v1.addProductos(new ArrayList<>(List.of(p1, p2)));
+        when(ventaService.getVenta(anyLong())).thenReturn(v1);
         when(ventaService.getProductosByAVenta(v1.getCodigoVenta())).thenReturn(v1.getListaProductos());
 
         mockMvc.perform(get("/ventas/productos/{codigoVenta}", v1.getCodigoVenta()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void cantGetProductosByAVentaAPI() throws Exception {
+        Venta v1 = new Venta(
+            1L,
+            LocalDate.of(2023, 9, 06),
+            26000.0,
+            new User()
+        );
+        Producto p1 = new Producto(
+            1L,
+            "Camiseta Argentina",
+            "Adidas",
+            20000.0,
+            20.0
+        );
+        Producto p2 = new Producto(
+            1L,
+            "Zapatillas",
+            "Nike",
+            30000.0,
+            2.0
+        );
+        v1.addProductos(new ArrayList<>(List.of(p1, p2)));
+        when(ventaService.getVenta(anyLong())).thenReturn(null);
+
+        mockMvc.perform(get("/ventas/productos/{codigoVenta}", v1.getCodigoVenta()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
