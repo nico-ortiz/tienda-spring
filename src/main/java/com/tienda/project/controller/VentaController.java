@@ -66,10 +66,8 @@ public class VentaController {
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
     ) {
-        Venta ventaExists = ventaService.getVenta(codigoVenta);
-        if (ventaExists != null) {
-            Producto productoExists = productoService.getProducto(codigoProducto);
-            if (productoExists != null) {    
+        if (ventaExists(codigoVenta)) {
+            if (productoExists(codigoProducto)) {    
                 Venta venta = ventaService.addProductoToVenta(codigoVenta, codigoProducto);
                 
                 //Stock control
@@ -90,13 +88,9 @@ public class VentaController {
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
     ) {
-      Venta ventaExists = ventaService.getVenta(codigoVenta);
-        if (ventaExists != null) {
-            Producto productoExists = productoService.getProducto(codigoProducto);
-            if (productoExists != null ) { 
-                
-                Venta venta = ventaService.deleteProductoToVenta(codigoVenta, codigoProducto);
-                
+        if (ventaExists(codigoVenta)) {
+            if (productoExists(codigoProducto)) { 
+                Venta venta = ventaService.deleteProductoToVenta(codigoVenta, codigoProducto);      
                 if(venta != null) {
                     List<ProductoDTO> listProductoDTO = new ArrayList<>();
                     ventaService.getListProductosDTOFromVenta(venta.getListaProductos(), listProductoDTO);
@@ -108,11 +102,10 @@ public class VentaController {
         }
         return new ResponseEntity<List<ProductoDTO>>(HttpStatus.NOT_FOUND);
     }
-    
+
     @GetMapping("{codigoVenta}")
     public ResponseEntity<Venta> getVenta(@PathVariable Long codigoVenta) {
-        Venta venta = ventaService.getVenta(codigoVenta);
-        if (venta != null) {
+        if (ventaExists(codigoVenta)) {
             return ResponseEntity.ok(ventaService.getVenta(codigoVenta));
         }
         return new ResponseEntity<Venta>(HttpStatus.NOT_FOUND);
@@ -128,9 +121,7 @@ public class VentaController {
 
     @PutMapping("/editar/{codigoVenta}")
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
-        Venta ventaToUpdate = ventaService.getVenta(codigoVenta);
-
-        if (ventaToUpdate != null) { 
+        if (ventaExists(codigoVenta)) { 
             if (userService.getUser(venta.getUser().getIdUser()) != null) {
                 ventaService.updateVenta(codigoVenta, venta);
                 return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
@@ -141,6 +132,9 @@ public class VentaController {
 
     @GetMapping("/productos/{codigoVenta}")
     public ResponseEntity<List<ProductoDTO>> getProductosByAVenta(@PathVariable Long codigoVenta) {
+        if (!ventaExists(codigoVenta)) {
+            return new ResponseEntity<List<ProductoDTO>>(HttpStatus.NOT_FOUND);
+        }
         List<Producto> listProducto = ventaService.getProductosByAVenta(codigoVenta);
         List<ProductoDTO> list = new ArrayList<>();
         ventaService.getListProductosDTOFromVenta(listProducto, list);
@@ -164,5 +158,13 @@ public class VentaController {
     @GetMapping("/mayorVenta")
     public ResponseEntity<VentaDTO> getMoreExpensiveVenta() {
         return ResponseEntity.ok(ventaService.getMoreExpensiveVenta());
+    }
+
+    private boolean ventaExists(Long codigoVenta) {
+        return ventaService.getVenta(codigoVenta) != null;
+    }
+
+    private boolean productoExists(Long codigoProducto) {
+        return productoService.getProducto(codigoProducto) != null;
     }
 }
