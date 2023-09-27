@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.tienda.project.additionalFunctions.Pair;
+import com.tienda.project.dto.ProductoDTO;
 import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
@@ -29,4 +30,6 @@ public interface IVentaService {
     public Pair<Double> getTotalPriceAndTotalCountsOfVentasByADay(LocalDate fechaVenta);
 
     public VentaDTO getMoreExpensiveVenta();
+
+    public void getListProductosDTOFromVenta(List<Producto> listProducto, List<ProductoDTO> list);
 }

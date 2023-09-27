@@ -43,6 +43,15 @@ public class User {
 		this.password = password;
 	}
 
+	public User(Long idUser, String nombre, String apellido, String dni, String password, Role role) {
+		this.idUser = idUser;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.dni = dni;
+		this.password = password;
+		this.role = role;
+	}
+
 	public User(String nombre, String apellido, String dni, String password, Role role) {
 		this.nombre = nombre;
 		this.apellido = apellido;

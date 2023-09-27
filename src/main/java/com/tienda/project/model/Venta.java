@@ -88,7 +88,7 @@ public class Venta {
 		}
 	}
 
-	public void remove(Producto producto) {
+	public void removeProducto(Producto producto) {
 		this.listaProductos.remove(producto);
 		if (producto.getVentas().contains(this)) {
 			producto.getVentas().remove(this);
