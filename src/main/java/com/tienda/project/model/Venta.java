@@ -44,7 +44,7 @@ public class Venta {
     private List<Producto> listaProductos = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "cliente_id", referencedColumnName = "idCliente")
+    @JoinColumn(name = "user_id", referencedColumnName = "idUser")
     private User user;
 
 	public Venta() {}
@@ -88,7 +88,7 @@ public class Venta {
 		}
 	}
 
-	public void remove(Producto producto) {
+	public void removeProducto(Producto producto) {
 		this.listaProductos.remove(producto);
 		if (producto.getVentas().contains(this)) {
 			producto.getVentas().remove(this);

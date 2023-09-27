@@ -10,13 +10,14 @@ import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dao.IProductoRepository;
 import com.tienda.project.dao.IUserRepository;
 import com.tienda.project.dao.IVentaRepository;
+import com.tienda.project.dto.ProductoDTO;
 import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.User;
 import com.tienda.project.model.Venta;
 
 @Service
-public class VentaService implements IVentaService{
+public class VentaService implements IVentaService {
 
     @Autowired
     private IVentaRepository ventaRepository;
@@ -31,8 +32,12 @@ public class VentaService implements IVentaService{
     public Venta createVenta(Venta venta) {
         Long idUser = venta.getUser().getIdUser();
         User user = userRepository.findById(idUser).orElse(null);
-        venta.setUser(user);
-        return ventaRepository.save(venta);
+        
+        if (user != null) {
+            venta.setUser(user);
+            return ventaRepository.save(venta);
+        }
+        return null;
     }
 
     @Override
@@ -80,7 +85,12 @@ public class VentaService implements IVentaService{
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
-        venta.remove(producto);
+        
+        if (!venta.getListaProductos().contains(producto)) 
+            return null;
+
+        venta.removeProducto(producto);
+        venta.setTotal(venta.getTotal() - producto.getCosto());
         producto.setCantidadDisponible(producto.getCantidadDisponible() + 1);
         return this.updateVenta(codigoVenta, venta);
     }
@@ -118,5 +128,18 @@ public class VentaService implements IVentaService{
             }
         }
         return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getUser().getNombre(), maxVenta.getUser().getApellido());
+    }
+
+    @Override
+    public void getListProductosDTOFromVenta(List<Producto> listProducto, List<ProductoDTO> list) {
+        ProductoDTO productoDTO = new ProductoDTO();
+
+        for (Producto producto: listProducto) {
+            productoDTO.setCodigoProducto(producto.getCodigoProducto());
+            productoDTO.setCosto(producto.getCosto());
+            productoDTO.setMarca(producto.getMarca());
+            productoDTO.setNombre(producto.getNombre());
+            list.add(productoDTO);
+        }
     }
 }

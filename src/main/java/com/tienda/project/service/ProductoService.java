@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.tienda.project.dao.IProductoRepository;
 import com.tienda.project.model.Producto;
+import com.tienda.project.model.Venta;
 
 @Service
 public class ProductoService implements IProductoService{
@@ -38,7 +39,7 @@ public class ProductoService implements IProductoService{
 	}
 
 	@Override
-	public Producto updateProducto(Long codigoProducto, Producto producto) {
+	public Producto updateProducto(Producto producto) {
 		return this.createProducto(producto);
 	}
 
@@ -53,6 +54,15 @@ public class ProductoService implements IProductoService{
 			}
 		}
 		return list;
+	}
+
+	@Override
+	public List<Venta> getVentasByCodigoProducto(Long codigoProducto) {
+		Producto producto = this.getProducto(codigoProducto);
+		if (producto != null) {
+			return producto.getVentas();
+		}
+		return null;
 	}
     
 }

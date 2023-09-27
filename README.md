@@ -24,3 +24,6 @@ To run especific test:
 ```
 ./mvnw test -Dtest="<test class name>"
 ```
+## API Documentation
+
+- [Documentation](https://documenter.getpostman.com/view/17467236/2s9YJZ3jGt)

@@ -14,5 +14,5 @@ public interface IUserService {
 
     public User deleteUser(Long idUser);
 
-    public User updateUser(Long idUser, User user);
+    public User updateUser(User user);
 }
