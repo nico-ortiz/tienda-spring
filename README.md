@@ -41,6 +41,9 @@ To run especific test:
 ```
 ./mvnw test -Dtest="<test class name>"
 ```
+## UML Diagram
+- [Diagram](https://github.com/nico-ortiz/tienda-spring/blob/main/docs/UML.png)
+
 ## API Documentation
 
 - [Documentation](https://documenter.getpostman.com/view/17467236/2s9YJZ3jGt)
