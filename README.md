@@ -16,12 +16,12 @@ create database <database_name>;
 ```
 
 We need to configure URL, username and password so that Spring can establish a connection with the database on startup.
-Add the above properties in [application.properties](https://github.com/nico-ortiz/tienda-spring/blob/main/src/main/resources/application.properties) file.
+Add the above properties in [application.properties](https://github.com/nico-ortiz/tienda-spring/blob/main/src/main/resources/application.properties) file. (Modify <...> properties)
 
 ```
 spring.datasource.url=jdbc:postgresql://localhost:<port>/<database_name>
-spring.datasource.username = USERNAME
-spring.datasource.password = PASSWORD
+spring.datasource.username = <USERNAME>
+spring.datasource.password = <PASSWORD>
 ```
 
 ## How to run 
