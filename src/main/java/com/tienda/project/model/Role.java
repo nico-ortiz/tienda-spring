@@ -1,6 +1,6 @@
 package com.tienda.project.model;
 
 public enum Role {
-    ADMIN,
-    USER
+    ROLE_ADMIN,
+    ROLE_USER
 }
