@@ -118,15 +118,19 @@ public class VentaService implements IVentaService {
     @Override
     public VentaDTO getMoreExpensiveVenta() {
         List<Venta> ventas = this.getVentas();
-        Double maxPriceTotal = Double.MIN_VALUE;
+        Double maxPriceTotal = -Double.MIN_VALUE;
         Venta maxVenta = new Venta();
 
         for (Venta venta: ventas) {
-            if (venta.getTotal() > maxPriceTotal) {
+            if (Double.compare(venta.getTotal(), maxPriceTotal) > 0) {
                 maxPriceTotal = venta.getTotal();
                 maxVenta = venta;
             }
         }
+
+        if (Double.compare(maxPriceTotal,0.0d) == 0) {
+            return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, 0, null, null);
+        } 
         return new VentaDTO(maxVenta.getCodigoVenta(), maxPriceTotal, maxVenta.getListaProductos().size(), maxVenta.getUser().getNombre(), maxVenta.getUser().getApellido());
     }
 
