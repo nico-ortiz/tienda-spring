@@ -24,22 +24,13 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse register(RegisterRequest registerRequest) {
-        User user = User.builder()
-            .nombre(registerRequest.getNombre())
-            .apellido(registerRequest.getApellido())
-            .username(registerRequest.getUsername())
-            .password(passwordEncoder.encode(registerRequest.getPassword()))
-            .role(Role.USER)   
-            .build();
-
-        userRepository.save(user);
-        String token = jwtService.generateToken(user);
-
-        return AuthResponse.builder()
-            .token(token)
-            .build();
+    public AuthResponse register(RegisterRequest request) {
+        return createUser(request, false);
     }
+
+    public AuthResponse registerAdmin(RegisterRequest request) {
+        return createUser(request, true);
+    }  
 
     public AuthResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(
@@ -49,6 +40,23 @@ public class AuthService {
             )
         );  
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
+        String token = jwtService.generateToken(user);
+
+        return AuthResponse.builder()
+            .token(token)
+            .build();
+    }
+
+    private AuthResponse createUser(RegisterRequest request, boolean isAdmin) {
+        User user = User.builder()
+            .nombre(request.getNombre())
+            .apellido(request.getApellido())
+            .username(request.getUsername())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(isAdmin ? Role.ROLE_ADMIN : Role.ROLE_USER)   
+            .build();
+
+        userRepository.save(user);
         String token = jwtService.generateToken(user);
 
         return AuthResponse.builder()
