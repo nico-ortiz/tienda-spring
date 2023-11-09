@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,17 +27,20 @@ public class ProductoController {
     private IProductoService productoService;
 
     @PostMapping("/crear")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> createProducto(@RequestBody Producto producto) {
         Producto productoSaved = productoService.createProducto(producto);
         return new ResponseEntity<Producto>(productoSaved, HttpStatus.CREATED);
     }
 
     @GetMapping("/traer")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<Producto>> getProductos() {
         return ResponseEntity.ok(productoService.getProductos());
     }
 
     @GetMapping("/{codigoProducto}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<Producto> getProducto(@PathVariable Long codigoProducto) {
         Producto producto = productoService.getProducto(codigoProducto);
         if (producto != null) {
@@ -46,6 +50,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/eliminar/{codigoProducto}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> deleteProduct(@PathVariable Long codigoProducto) {
         Producto productoDeleted = productoService.deleteProducto(codigoProducto);
         if (productoDeleted == null) {
@@ -55,6 +60,7 @@ public class ProductoController {
     }
 
     @PutMapping("/editar/{codigoProducto}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Producto> updateProducto(@PathVariable Long codigoProducto, @RequestBody Producto producto) {        
         Producto productoToUpdate = productoService.getProducto(codigoProducto);
         if (productoToUpdate != null ) {
@@ -65,12 +71,14 @@ public class ProductoController {
         return new ResponseEntity<Producto>(productoToUpdate, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/falta_stock")
+    @GetMapping("/falta-stock")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Producto>> getProductosStock() {
         return ResponseEntity.ok(productoService.getProductosWhoseStockLessThanFive());
     }
 
     @GetMapping("{codigoProducto}/listaVentas")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Venta>> getListaVentasDeProductoById(@PathVariable Long codigoProducto) {
         Producto producto = productoService.getProducto(codigoProducto);
         if (producto != null) {

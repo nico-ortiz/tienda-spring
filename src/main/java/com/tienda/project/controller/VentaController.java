@@ -8,7 +8,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dto.ProductoDTO;
+import com.tienda.project.dto.UserDTO;
 import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
@@ -44,24 +49,34 @@ public class VentaController {
     private IProductoService productoService;
 
     @PostMapping("/crear")
-    public ResponseEntity<Venta> createVenta(@RequestBody Venta venta) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<VentaDTO> createVenta(@RequestBody Venta venta) {
         Venta ventaSaved = ventaService.createVenta(venta);
 
         if (ventaSaved !=null) {
-            return new ResponseEntity<Venta>(ventaSaved, HttpStatus.CREATED);
+            VentaDTO ventaDTO = new VentaDTO(
+                ventaSaved.getCodigoVenta(),
+                ventaSaved.getTotal(),
+                ventaSaved.getListaProductos().size(),
+                ventaSaved.getUser().getNombre(),
+                ventaSaved.getUser().getApellido()
+            );
+            return new ResponseEntity<VentaDTO>(ventaDTO, HttpStatus.CREATED);
         }
         //User not found
         else {
-            return new ResponseEntity<Venta>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
     }
 
     @GetMapping("/traer")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Venta>> getVentas() {
         return ResponseEntity.ok(ventaService.getVentas());
     }
     
     @PatchMapping("/{codigoVenta}/listaProductos/add/{codigoProducto}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> addProductoToVenta(
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
@@ -77,13 +92,15 @@ public class VentaController {
                     return ResponseEntity.ok(listProductoDTO);
                 }
                 else
-                    return new ResponseEntity<List<ProductoDTO>>(HttpStatus.METHOD_NOT_ALLOWED);
+                    throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Product out of stock");
             }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
         }
-        return new ResponseEntity<List<ProductoDTO>>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
     }
 
     @PatchMapping("{codigoVenta}/listaProductos/del/{codigoProducto}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> deleteProductoToVenta(
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
@@ -97,43 +114,57 @@ public class VentaController {
                     return new ResponseEntity<List<ProductoDTO>>(listProductoDTO, HttpStatus.OK);
                 }
                 else
-                    return new ResponseEntity<List<ProductoDTO>>(HttpStatus.METHOD_NOT_ALLOWED); 
+                    throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED, "Product out of stock");
             }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
         }
-        return new ResponseEntity<List<ProductoDTO>>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
     }
 
     @GetMapping("{codigoVenta}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<Venta> getVenta(@PathVariable Long codigoVenta) {
         if (ventaExists(codigoVenta)) {
             return ResponseEntity.ok(ventaService.getVenta(codigoVenta));
         }
-        return new ResponseEntity<Venta>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
     }
 
     @DeleteMapping("/eliminar/{codigoVenta}")
-    public ResponseEntity<Venta> deleteVenta(@PathVariable Long codigoVenta) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<VentaDTO> deleteVenta(@PathVariable Long codigoVenta) {
         Venta ventaDeleted = ventaService.deleteVenta(codigoVenta);
-        if (ventaDeleted != null) 
-            return new ResponseEntity<Venta>(ventaDeleted, HttpStatus.ACCEPTED);
-        return new ResponseEntity<Venta>(HttpStatus.NOT_FOUND);
+        if (ventaDeleted != null) {
+            VentaDTO ventaDTO = new VentaDTO(
+                ventaDeleted.getCodigoVenta(),
+                ventaDeleted.getTotal(),
+                ventaDeleted.getListaProductos().size(),
+                ventaDeleted.getUser().getNombre(),
+                ventaDeleted.getUser().getApellido()
+            );
+            return new ResponseEntity<VentaDTO>(ventaDTO, HttpStatus.ACCEPTED);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
     }
 
     @PutMapping("/editar/{codigoVenta}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
         if (ventaExists(codigoVenta)) { 
             if (userService.getUser(venta.getUser().getIdUser()) != null) {
                 ventaService.updateVenta(codigoVenta, venta);
                 return ResponseEntity.ok(ventaService.getVenta(venta.getCodigoVenta()));
             } 
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        return new ResponseEntity<Venta>(HttpStatus.NOT_FOUND);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
     }
 
-    @GetMapping("/productos/{codigoVenta}")
+    @GetMapping("/{codigoVenta}/productos")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> getProductosByAVenta(@PathVariable Long codigoVenta) {
         if (!ventaExists(codigoVenta)) {
-            return new ResponseEntity<List<ProductoDTO>>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
         }
         List<Producto> listProducto = ventaService.getProductosByAVenta(codigoVenta);
         List<ProductoDTO> list = new ArrayList<>();
@@ -142,6 +173,7 @@ public class VentaController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Double>> getTotalVentasByADay(
         @RequestParam(name = "fechaVenta") LocalDate fechaVenta) {
         Pair<Double> pair = ventaService.getTotalPriceAndTotalCountsOfVentasByADay(fechaVenta);
@@ -156,6 +188,7 @@ public class VentaController {
     }
 
     @GetMapping("/mayorVenta")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VentaDTO> getMoreExpensiveVenta() {
         return ResponseEntity.ok(ventaService.getMoreExpensiveVenta());
     }

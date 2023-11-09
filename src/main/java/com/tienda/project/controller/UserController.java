@@ -1,10 +1,13 @@
 package com.tienda.project.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,13 +16,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
-
+import com.tienda.project.dto.UserDTO;
 import com.tienda.project.model.User;
 import com.tienda.project.service.IUserService;
 
 @RestController
 @RequestMapping("/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
     
     @Autowired
@@ -27,13 +32,27 @@ public class UserController {
 
     @PostMapping("/crear")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        User userSaved = userService.createUser(user);
-        return new ResponseEntity<User>(userSaved, HttpStatus.CREATED);
+        try {
+            User userSaved = userService.createUser(user);
+            return new ResponseEntity<User>(userSaved, HttpStatus.CREATED);
+        } catch(DataIntegrityViolationException e){
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Username "+user.getUsername()+" exists. Try again."        
+            );
+        }
     }
 
     @GetMapping("/traer")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        return ResponseEntity.ok(userService.getUsers().stream().map(elem -> 
+            new UserDTO(
+                elem.getIdUser(),
+                elem.getNombre(),
+                elem.getApellido(),
+                elem.getUsername()
+            )
+        ).collect(Collectors.toList()));
     }
 
     @GetMapping("/{idUser}")
