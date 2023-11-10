@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.tienda.project.additionalFunctions.Pair;
@@ -29,6 +30,7 @@ public class VentaService implements IVentaService {
     private IProductoRepository productoRepository;
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Venta createVenta(Venta venta) {
         Long idUser = venta.getUser().getIdUser();
         User user = userRepository.findById(idUser).orElse(null);
@@ -41,16 +43,19 @@ public class VentaService implements IVentaService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Venta> getVentas() {
         return ventaRepository.findAll();
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Venta getVenta(Long idVenta) {
         return ventaRepository.findById(idVenta).orElse(null);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Venta deleteVenta(Long idVenta) {
         Venta venta = this.getVenta(idVenta);
         ventaRepository.deleteById(idVenta);
@@ -58,6 +63,7 @@ public class VentaService implements IVentaService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Venta updateVenta(Long idVenta, Venta venta) {
         venta.setCodigoVenta(idVenta);
         return this.createVenta(venta);
@@ -65,6 +71,7 @@ public class VentaService implements IVentaService {
 
     @Override
     //Check excetions
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Venta addProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
@@ -82,6 +89,7 @@ public class VentaService implements IVentaService {
 
     @Override
     //CheckExceptions
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public Venta deleteProductoToVenta(Long codigoVenta, Long codigoProducto) {
         Venta venta = ventaRepository.findById(codigoVenta).get();
         Producto producto = productoRepository.findById(codigoProducto).get();
@@ -96,12 +104,14 @@ public class VentaService implements IVentaService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public List<Producto> getProductosByAVenta(Long codigoVenta) {
         Venta venta = this.getVenta(codigoVenta);
         return venta.getListaProductos();
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Pair<Double> getTotalPriceAndTotalCountsOfVentasByADay(LocalDate fechaVenta) {
         List<Venta> ventas = this.getVentas();
         Double totalPrice = 0.0, totalCount = 0.0;
@@ -116,6 +126,7 @@ public class VentaService implements IVentaService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public VentaDTO getMoreExpensiveVenta() {
         List<Venta> ventas = this.getVentas();
         Double maxPriceTotal = -Double.MIN_VALUE;
@@ -135,6 +146,7 @@ public class VentaService implements IVentaService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public void getListProductosDTOFromVenta(List<Producto> listProducto, List<ProductoDTO> list) {
         ProductoDTO productoDTO = new ProductoDTO();
 
