@@ -107,7 +107,7 @@ public class VentaServiceTest {
 
         //Assert
         assertThat(v1).isEqualTo(expectedVenta);
-        assertThat(c1.getDni()).isEqualTo(expectedVenta.getUser().getDni());
+        assertThat(c1.getUsername()).isEqualTo(expectedVenta.getUser().getUsername());
         verify(ventaRepository, times(1)).findById(anyLong());
     }
 
