@@ -3,6 +3,7 @@ package com.tienda.project.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import com.tienda.project.dao.IUserRepository;
 import com.tienda.project.model.User;
 
 @Service
+@PreAuthorize("hasRole('ADMIN')")
 public class UserService implements IUserService {
 
     @Autowired

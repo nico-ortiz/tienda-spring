@@ -8,10 +8,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.tienda.project.additionalFunctions.Pair;
 import com.tienda.project.dto.ProductoDTO;
-import com.tienda.project.dto.UserDTO;
 import com.tienda.project.dto.VentaDTO;
 import com.tienda.project.model.Producto;
 import com.tienda.project.model.Venta;
@@ -49,7 +46,6 @@ public class VentaController {
     private IProductoService productoService;
 
     @PostMapping("/crear")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<VentaDTO> createVenta(@RequestBody Venta venta) {
         Venta ventaSaved = ventaService.createVenta(venta);
 
@@ -70,13 +66,11 @@ public class VentaController {
     }
 
     @GetMapping("/traer")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Venta>> getVentas() {
         return ResponseEntity.ok(ventaService.getVentas());
     }
     
     @PatchMapping("/{codigoVenta}/listaProductos/add/{codigoProducto}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> addProductoToVenta(
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
@@ -100,7 +94,6 @@ public class VentaController {
     }
 
     @PatchMapping("{codigoVenta}/listaProductos/del/{codigoProducto}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> deleteProductoToVenta(
         @PathVariable Long codigoVenta,
         @PathVariable Long codigoProducto
@@ -122,7 +115,6 @@ public class VentaController {
     }
 
     @GetMapping("{codigoVenta}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<Venta> getVenta(@PathVariable Long codigoVenta) {
         if (ventaExists(codigoVenta)) {
             return ResponseEntity.ok(ventaService.getVenta(codigoVenta));
@@ -131,7 +123,6 @@ public class VentaController {
     }
 
     @DeleteMapping("/eliminar/{codigoVenta}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VentaDTO> deleteVenta(@PathVariable Long codigoVenta) {
         Venta ventaDeleted = ventaService.deleteVenta(codigoVenta);
         if (ventaDeleted != null) {
@@ -148,7 +139,6 @@ public class VentaController {
     }
 
     @PutMapping("/editar/{codigoVenta}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Venta> updateVenta(@PathVariable Long codigoVenta, @RequestBody Venta venta) {
         if (ventaExists(codigoVenta)) { 
             if (userService.getUser(venta.getUser().getIdUser()) != null) {
@@ -161,7 +151,6 @@ public class VentaController {
     }
 
     @GetMapping("/{codigoVenta}/productos")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<ProductoDTO>> getProductosByAVenta(@PathVariable Long codigoVenta) {
         if (!ventaExists(codigoVenta)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sale not found");
@@ -173,7 +162,6 @@ public class VentaController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Double>> getTotalVentasByADay(
         @RequestParam(name = "fechaVenta") LocalDate fechaVenta) {
         Pair<Double> pair = ventaService.getTotalPriceAndTotalCountsOfVentasByADay(fechaVenta);
@@ -188,7 +176,6 @@ public class VentaController {
     }
 
     @GetMapping("/mayorVenta")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VentaDTO> getMoreExpensiveVenta() {
         return ResponseEntity.ok(ventaService.getMoreExpensiveVenta());
     }
